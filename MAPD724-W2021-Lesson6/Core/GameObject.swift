@@ -54,5 +54,11 @@ class GameObject: SKSpriteNode, GameProtocol
     {
     }
     
+    func isLandscape()-> Bool {
+        return false
+    }
     
+    func switchOrientation() {
+        
+    }
 }

@@ -19,19 +19,36 @@ class Island: GameObject
     
     override func CheckBounds()
     {
-        if(position.y <= -730)
-        {
-            Reset()
+        if isLandscape() {
+            if(position.x <= -730)
+            {
+                Reset()
+            }
+        }
+        else{
+            if(position.y <= -730)
+            {
+                Reset()
+            }
         }
     }
     
     override func Reset()
     {
-        position.y = 730
-        // get a pseudo-random number from -313 to 313 =
-        let randomX:Int = (randomSource?.nextInt(upperBound: 626))! - 313
-        position.x = CGFloat(randomX)
-        isColliding = false
+        if isLandscape() {
+            position.x = 730
+            position.y = 0
+            let randomY:Int = (randomSource?.nextInt(upperBound: 1000))! - 313
+            position.y = CGFloat(randomY)
+            isColliding = false
+        }
+        else{
+            position.x = 0
+            position.y = 730
+            let randomX:Int = (randomSource?.nextInt(upperBound: 626))! - 313
+            position.x = CGFloat(randomX)
+            isColliding = false
+        }
     }
     
     // initialization
@@ -39,7 +56,14 @@ class Island: GameObject
     {
         zPosition = 1
         Reset()
-        dy = 5.0
+        if isLandscape() {
+            dx = 5.0
+            dy = 0.0
+        }
+        else{
+            dx = 0.0
+            dy = 5.0
+        }
     }
     
     override func Update()
@@ -50,6 +74,38 @@ class Island: GameObject
     
     func Move()
     {
-        position.y -= dy!
+        if isLandscape(){
+            position.x -= dx!
+            zRotation = CGFloat(Double.pi/2)
+        }
+        else{
+            position.y -= dy!
+            zRotation = 0
+        }
+    }
+    override func isLandscape() -> Bool {
+        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+            dx = 5.0
+            dy = 0.0
+            return true
+        }
+        else{
+            dx = 0.0
+            dy = 5.0
+            return false
+        }
+    }
+    override func switchOrientation(){
+        if isLandscape() {
+            let temp = position.y
+            position.y = position.x * -1
+            position.x = temp
+        }
+        else{
+            let temp = position.x
+            position.x = position.y * -1
+            position.y = temp
+        }
+        
     }
 }

@@ -7,4 +7,8 @@ protocol GameProtocol
     func Start()
     
     func Update()
+    
+    func isLandscape()-> Bool
+    
+    func switchOrientation()
 }

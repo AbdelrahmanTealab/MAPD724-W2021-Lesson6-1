@@ -7,8 +7,9 @@ let screenSize = UIScreen.main.bounds
 var screenWidth: CGFloat?
 var screenHeight: CGFloat?
 
-class GameScene: SKScene
+class GameScene: SKScene,CanReceiveTransitionEvents
 {
+
     
     // instance variables
     var ocean: Ocean?
@@ -25,7 +26,6 @@ class GameScene: SKScene
         
         // add ocean to the scene
         ocean = Ocean() // allocate memory
-        ocean?.position = CGPoint(x: 0, y: 773)
         addChild(ocean!) // add object to the scene
         
         // add island to the scene
@@ -34,11 +34,10 @@ class GameScene: SKScene
         
         // add plane to the scene
         plane = Plane()
-        plane?.position = CGPoint(x: 0, y: -495)
         addChild(plane!)
         
         // add 3 clouds to the scene
-        for index in 0...2
+        for index in 0...1
         {
             let cloud: Cloud = Cloud()
             clouds.append(cloud)
@@ -67,18 +66,32 @@ class GameScene: SKScene
     
     func touchDown(atPoint pos : CGPoint)
     {
-        plane?.TouchMove(newPos: CGPoint(x: pos.x, y: -495))
+        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+            plane?.TouchMove(newPos: CGPoint(x: -495, y: pos.y))
+        }
+        else{
+            plane?.TouchMove(newPos: CGPoint(x: pos.x, y: -495))
+        }
     }
     
     func touchMoved(toPoint pos : CGPoint)
     {
-        plane?.TouchMove(newPos: CGPoint(x: pos.x, y: -495))
-
+        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+            plane?.TouchMove(newPos: CGPoint(x: -495, y: pos.y))
+        }
+        else{
+            plane?.TouchMove(newPos: CGPoint(x: pos.x, y: -495))
+        }
     }
     
     func touchUp(atPoint pos : CGPoint)
     {
-        plane?.TouchMove(newPos: CGPoint(x: pos.x, y: -495))
+        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+            plane?.TouchMove(newPos: CGPoint(x: -495, y: pos.y))
+        }
+        else{
+            plane?.TouchMove(newPos: CGPoint(x: pos.x, y: -495))
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -101,6 +114,24 @@ class GameScene: SKScene
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
     
+    func viewWillTransition(to size: CGSize) {
+        switchOrientation()
+    }
+    
+    func switchOrientation() {
+        let tempW = scene?.size.width
+        scene?.size.width = (scene?.size.height)!
+        scene?.size.height = tempW!
+        ocean?.switchOrientation()
+        plane?.switchOrientation()
+        island?.switchOrientation()
+        for cloud in clouds
+        {
+            cloud.switchOrientation()
+        }
+    }
+    
+    
     // this is where all the fun happens - this function is called about 60fps - every 16.666ms
     override func update(_ currentTime: TimeInterval)
     {
@@ -118,4 +149,9 @@ class GameScene: SKScene
         
         
     }
+}
+
+//Reference: https://stackoverflow.com/questions/50012451/how-to-detect-device-rotation-from-skscene
+protocol CanReceiveTransitionEvents {
+    func viewWillTransition(to size: CGSize)
 }
