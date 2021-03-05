@@ -16,9 +16,16 @@ class CollisionManager
     {
         let P1 = object1.position
         let P2 = object2.position
-        let P1HalfHeight = object1.halfHeight!
-        let P2HalfHeight = object2.halfHeight!
-        let HalfHeights = P1HalfHeight + P2HalfHeight
+        var P1HalfHeight = object1.halfHeight!
+        var P2HalfHeight = object2.halfHeight!
+        var HalfHeights = P1HalfHeight + P2HalfHeight
+        
+        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+            P1HalfHeight = object1.halfWidth!
+            P2HalfHeight = object2.halfWidth!
+            HalfHeights = P1HalfHeight + P2HalfHeight
+            print("Collision manager is using half widths")
+        }
         
         if(SquaredDistance(point1: P1, point2: P2) < HalfHeights * HalfHeights)
         {
